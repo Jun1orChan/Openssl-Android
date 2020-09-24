@@ -22,7 +22,7 @@ char *Base64Util::base64Enc(const char *content, int length) {
     BIO_flush(b64);
     BIO_get_mem_ptr(b64, &bptr);
     BIO_set_close(b64, BIO_NOCLOSE);
-    char *buff = (char *) malloc(bptr->length + 1);
+    char *buff = (char *) calloc(sizeof(char *), bptr->length + 1);
     memcpy(buff, bptr->data, bptr->length);
     buff[bptr->length] = 0;
     BIO_free_all(b64);
@@ -33,7 +33,7 @@ char *Base64Util::base64Enc(const char *content, int length) {
 char *Base64Util::base64Dec(char *content, int length) {
     BIO *b64 = NULL;
     BIO *bmem = NULL;
-    char *buffer = (char *) malloc(length);
+    char *buffer = (char *) calloc(sizeof(char *), length);
     memset(buffer, 0, length);
     b64 = BIO_new(BIO_f_base64());
     bmem = BIO_new_mem_buf(content, length);

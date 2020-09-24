@@ -26,9 +26,11 @@ Java_com_nd_ndkdemo_MainActivity_stringFromJNI(
     LOGE("AES_DEC:%s", aesDec);
     unsigned char key2[] = "12345678";
     unsigned char iv2[] = "12345678";
+    unsigned char iv3[] = "12345678";
     char *desCBC_PKCS5Enc = DESUtil::des_cbc_enc(test, key2, iv2);
     LOGE("DES_CBC_PKCS5_enc:%s", desCBC_PKCS5Enc);
-    char *desCBC_PKCS5Dec = DESUtil::des_cbc_dec((unsigned char *) desCBC_PKCS5Enc, key2, iv2);
+    char *desCBC_PKCS5Dec = DESUtil::des_cbc_dec((unsigned char *) desCBC_PKCS5Enc, key2,
+                                                 iv3);
     LOGE("DES_CBC_PKCS5_dec:%s", desCBC_PKCS5Dec);
     return env->NewStringUTF("ssss");
 }
