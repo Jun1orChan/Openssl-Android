@@ -11,7 +11,7 @@ extern "C" JNIEXPORT jstring JNICALL
 Java_com_nd_ndkdemo_MainActivity_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
-    unsigned char test[] = "NetDragon1";
+    unsigned char test[] = "实例1中，感觉把sizeof(dest)写成sizeof(dest)/sizeof(char)更严谨些。实例中的dest数组存放char类型元素，sizeof(dest)的值为100";
     LOGE("MD5:%s", MD5Util::md5(test));
     char *base64EncRet = Base64Util::base64Enc((const char *) test, strlen((char *) test));
     LOGE("Base64_ENC:%s", base64EncRet);

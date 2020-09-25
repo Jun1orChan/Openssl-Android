@@ -17,9 +17,13 @@ char *AESUtil::aes_128_cbc_enc(const unsigned char *content, const unsigned char
     //清空内存空间
     memset(out, 0, (src_Len / 16 + 1) * 16);
 
+    unsigned char *ivCopy = (unsigned char *) calloc(sizeof(unsigned char *), strlen((char *) iv));
+    memcpy(ivCopy, iv, strlen((char *) iv));
+
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     EVP_CIPHER_CTX_init(ctx);
-    EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv);
+    EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, ivCopy);
+    EVP_CIPHER_CTX_set_padding(ctx, EVP_PADDING_PKCS7);
     EVP_EncryptUpdate(ctx, out, &outlen, content, src_Len);
     cipherText_len = outlen;
     EVP_EncryptFinal_ex(ctx, out + outlen, &outlen);
@@ -34,20 +38,24 @@ char *AESUtil::aes_128_cbc_dec(const unsigned char *content, const unsigned char
                                const unsigned char *iv) {
     // base64解码
     char *encData = Base64Util::base64Dec((char *) content, strlen((char *) content));
-    int src_Len = strlen((char *) encData);
+
+    unsigned char *ivCopy = (unsigned char *) calloc(sizeof(unsigned char *), strlen((char *) iv));
+    memcpy(ivCopy, iv, strlen((char *) iv));
+
+    int src_Len = strlen(encData);
     unsigned char *out = (unsigned char *) calloc(sizeof(unsigned char *), src_Len);
-    memset(out, 0, src_Len);
     int outLen = 0, plaintextLen = 0;
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     EVP_CIPHER_CTX_init(ctx);
-    EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv);
+    EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, ivCopy);
+    EVP_CIPHER_CTX_set_padding(ctx, EVP_PADDING_PKCS7);
     EVP_DecryptUpdate(ctx, out, &outLen, (const unsigned char *) encData, src_Len);
     plaintextLen = outLen;
-    EVP_DecryptFinal_ex(ctx, out, &outLen);
-    plaintextLen += outLen;
+//    EVP_DecryptFinal_ex(ctx, out, &outLen);
+//    plaintextLen += outLen;
     EVP_CIPHER_CTX_cleanup(ctx);
-    char *ret = (char *) calloc(sizeof(char *), plaintextLen + 1);
-    memcpy(ret, out, plaintextLen);
+    char *ret = (char *) calloc(sizeof(char), plaintextLen + 1);
+    memcpy(ret, out, strlen((char *) out));
     free(out);
     return ret;
 }
